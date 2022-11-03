@@ -37,8 +37,8 @@ class Game:
             self.handle_input()
 
             # draw map
+            self.shadow_caster.update([self.player_position[0], self.player_position[1]], self.render_surface)
             self.map.update(self.render_surface)
-            self.shadow_caster.update(self.player_position, self.render_surface)
             
             # draw player position
             pygame.draw.circle(self.render_surface, 'red', self.player_position, 10)
@@ -46,6 +46,7 @@ class Game:
             self.render_surface.blit(self.font.render('fps: ' + str(round(self.clock.get_fps(), 2)), True, 'darkgrey'), (5, 5))
             self.screen.blit(pygame.transform.scale(self.render_surface, self.screen_dimensions), (0, 0))
             pygame.display.update()
+            self.render_surface.fill('black')
 
     def handle_input(self):
         for event in pygame.event.get():

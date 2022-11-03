@@ -14,7 +14,7 @@ class Map:
         self.render_width, self.render_height = 1920, 1080
         self.render_dimensions = (self.render_width, self.render_height)
         self.render_surface = pygame.Surface(self.render_dimensions).convert_alpha()
-        self.render_surface.fill('black')
+        self.render_surface.set_colorkey('black')
 
         self.map_layout = [
             [[100, 100], [175, 100], [175, 175], [100, 175]],

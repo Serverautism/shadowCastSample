@@ -1,5 +1,6 @@
 import pygame
 from shapely import geometry, ops
+from scipy import spatial
 
 
 class Shadow:
@@ -13,7 +14,7 @@ class ShadowCaster:
         self.map = map
 
         self.colors = {
-            'shadows': (255, 84, 84),
+            'shadows': (83, 84, 84),
             'green': (2, 117, 2),
             'red': (133, 16, 16),
             'blue': (24, 29, 171)
@@ -133,8 +134,13 @@ class ShadowCaster:
                         allpoints.append([self.render_width, 0])
                         allpoints.append([self.render_width, self.render_height])
 
+                '''shadow_indices = spatial.ConvexHull(allpoints).vertices
+                shadow_polygon = [allpoints[i] for i in shadow_indices]'''
+
                 shadow_polygon = list(geometry.MultiPoint(allpoints).convex_hull.exterior.coords)
 
                 wall_shadows.append(Shadow(shadow_polygon))
 
-                pygame.draw.polygon(surface, self.colors['shadows'], shadow_polygon)
+                pygame.draw.polygon(self.render_surface, self.colors['shadows'], shadow_polygon)
+
+        surface.blit(self.render_surface, (0, 0))
