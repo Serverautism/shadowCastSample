@@ -1,5 +1,6 @@
 import pygame
 from map import Map
+from shadow_caster import ShadowCaster
 
 
 class Game:
@@ -28,6 +29,7 @@ class Game:
 
         # other objects
         self.map = Map()
+        self.shadow_caster = ShadowCaster(self.map)
 
     def run(self):
         while self.running:
@@ -36,6 +38,7 @@ class Game:
 
             # draw map
             self.map.update(self.render_surface)
+            self.shadow_caster.update(self.player_position, self.render_surface)
             
             # draw player position
             pygame.draw.circle(self.render_surface, 'red', self.player_position, 10)

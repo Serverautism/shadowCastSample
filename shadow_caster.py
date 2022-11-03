@@ -13,7 +13,7 @@ class ShadowCaster:
         self.map = map
 
         self.colors = {
-            'shadows': (83, 84, 84),
+            'shadows': (255, 84, 84),
             'green': (2, 117, 2),
             'red': (133, 16, 16),
             'blue': (24, 29, 171)
@@ -26,13 +26,13 @@ class ShadowCaster:
 
         self.last_player_center = [0, 0]
 
-    def update(self, player_center, debug=False):
+    def update(self, player_center, surface, debug=False):
         if self.last_player_center != player_center:
             self.last_player_center = player_center
             self.render_surface.fill('black')
 
             for wall in self.map.walls:
-                nearest_point = list(ops.nearest_points(geometry.Point(player_center), wall.shapely)[1].coords)[0]
+                nearest_point = list(ops.nearest_points(geometry.Point(player_center), wall.polygon)[1].coords)[0]
                 wall.distance = round(((nearest_point[0] - player_center[0]) ** 2 + (nearest_point[1] - player_center[1]) ** 2) ** .5, 2)
 
             wall_shadows = []
@@ -93,3 +93,48 @@ class ShadowCaster:
 
                         pygame.draw.aaline(self.render_surface, self.colors['red'], player_center, corner)
                         pygame.draw.aaline(self.render_surface, self.colors['green'], corner, new_point)
+
+                new_x_values = [i[0] for i in new_points]
+                new_y_values = [i[1] for i in new_points]
+                left = 0 in new_x_values
+                right = self.render_width in new_x_values
+                top = 0 in new_y_values
+                bottom = self.render_height in new_y_values
+
+                if left and top:
+                    allpoints.append([0, 0])
+
+                if right and top:
+                    allpoints.append([self.render_width, 0])
+
+                if left and bottom:
+                    allpoints.append([0, self.render_height])
+
+                if right and bottom:
+                    allpoints.append([self.render_width, self.render_height])
+
+                if left and right and not top and not bottom:
+                    wall_y_values = [i[1] for i in wall.corners]
+                    if player_center[1] > max(wall_y_values):
+                        allpoints.append([0, 0])
+                        allpoints.append([self.render_width, 0])
+
+                    if player_center[1] < min(wall_y_values):
+                        allpoints.append([0, self.render_height])
+                        allpoints.append([self.render_width, self.render_height])
+
+                if top and bottom and not left and not right:
+                    wall_x_values = [i[0] for i in wall.corners]
+                    if player_center[0] > max(wall_x_values):
+                        allpoints.append([0, 0])
+                        allpoints.append([0, self.render_height])
+
+                    if player_center[0] < min(wall_x_values):
+                        allpoints.append([self.render_width, 0])
+                        allpoints.append([self.render_width, self.render_height])
+
+                shadow_polygon = list(geometry.MultiPoint(allpoints).convex_hull.exterior.coords)
+
+                wall_shadows.append(Shadow(shadow_polygon))
+
+                pygame.draw.polygon(surface, self.colors['shadows'], shadow_polygon)
