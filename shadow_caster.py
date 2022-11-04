@@ -13,24 +13,32 @@ class ShadowCaster:
     def __init__(self, map):
         self.map = map
 
+        self.font = pygame.font.SysFont('Arial', 20)
+
         self.colors = {
+            'text': (5, 5, 5),
             'shadows': (83, 84, 84),
-            'green': (2, 117, 2),
+            'green': (32, 252, 3),
             'red': (133, 16, 16),
             'blue': (24, 29, 171)
         }
 
         self.render_width, self.render_height = 1920, 1080
         self.render_dimensions = (self.render_width, self.render_height)
-        self.render_surface = pygame.Surface(self.render_dimensions).convert_alpha()
-        self.render_surface.set_colorkey('black')
+        self.shadow_render_surface = pygame.Surface(self.render_dimensions)
+        self.shadow_render_surface.set_colorkey('black')
+        self.debug_render_surface = pygame.Surface(self.render_dimensions)
+        self.debug_render_surface.set_colorkey('black')
 
         self.last_player_center = [0, 0]
 
-    def update(self, player_center, surface, debug=False):
+    def update(self, player_center, debug=False):
         if self.last_player_center != player_center:
-            self.last_player_center = player_center
-            self.render_surface.fill('black')
+            self.last_player_center = player_center.copy()
+            self.shadow_render_surface.fill('black')
+
+            if debug:
+                self.debug_render_surface.fill('black')
 
             for wall in self.map.walls:
                 nearest_point = list(ops.nearest_points(geometry.Point(player_center), wall.polygon)[1].coords)[0]
@@ -38,15 +46,19 @@ class ShadowCaster:
 
             wall_shadows = []
 
-            for wall in sorted(self.map.walls, key=lambda x: x.distance):
+            for i, wall in enumerate(sorted(self.map.walls, key=lambda x: x.distance)):
                 allpoints = []
 
                 new_points = []
 
                 skip = False
-                for finished_shadow in wall_shadows:
+                for j, finished_shadow in enumerate(wall_shadows):
                     if finished_shadow.polygon.contains(wall.polygon):
                         skip = True
+                        if debug:
+                            self.debug_render_surface.blit(
+                                self.font.render(str(j+1), True, self.colors['text']),
+                                (wall.center[0], wall.center[1] - 15))
                         break
 
                 if skip:
@@ -89,11 +101,11 @@ class ShadowCaster:
                     new_points.append(new_point)
                     
                     if debug:
-                        pygame.draw.circle(self.render_surface, self.colors['red'], corner, 2)
-                        pygame.draw.circle(self.render_surface, self.colors['green'], new_point, 2)
+                        pygame.draw.circle(self.debug_render_surface, self.colors['red'], corner, 4)
+                        pygame.draw.circle(self.debug_render_surface, self.colors['green'], new_point, 4)
 
-                        pygame.draw.aaline(self.render_surface, self.colors['red'], player_center, corner)
-                        pygame.draw.aaline(self.render_surface, self.colors['green'], corner, new_point)
+                        pygame.draw.aaline(self.debug_render_surface, self.colors['red'], player_center, corner)
+                        pygame.draw.aaline(self.debug_render_surface, self.colors['green'], corner, new_point)
 
                 new_x_values = [i[0] for i in new_points]
                 new_y_values = [i[1] for i in new_points]
@@ -141,6 +153,16 @@ class ShadowCaster:
 
                 wall_shadows.append(Shadow(shadow_polygon))
 
-                pygame.draw.polygon(self.render_surface, self.colors['shadows'], shadow_polygon)
+                if debug:
+                    self.debug_render_surface.blit(
+                        self.font.render(str(i+1), True, self.colors['text']), (wall.center[0], wall.center[1] - 15))
+                    self.debug_render_surface.blit(
+                        self.font.render(str(wall.distance), True, self.colors['text']), wall.center)
 
-        surface.blit(self.render_surface, (0, 0))
+                pygame.draw.polygon(self.shadow_render_surface, self.colors['shadows'], shadow_polygon)
+
+    def draw_shadows(self, surface):
+        surface.blit(self.shadow_render_surface, (0, 0))
+
+    def draw_debug(self, surface):
+        surface.blit(self.debug_render_surface, (0, 0))

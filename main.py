@@ -21,7 +21,7 @@ class Game:
 
         self.render_width, self.render_height = 1920, 1080
         self.render_dimensions = (self.render_width, self.render_height)
-        self.render_surface = pygame.Surface(self.render_dimensions).convert_alpha()
+        self.render_surface = pygame.Surface(self.render_dimensions)
 
         # player related
         self.player_position = [1920/2, 1080/2]
@@ -37,8 +37,10 @@ class Game:
             self.handle_input()
 
             # draw map
-            self.shadow_caster.update([self.player_position[0], self.player_position[1]], self.render_surface)
-            self.map.update(self.render_surface)
+            self.shadow_caster.update(self.player_position, debug=True)
+            self.shadow_caster.draw_shadows(self.render_surface)
+            self.map.draw_walls(self.render_surface)
+            self.shadow_caster.draw_debug(self.render_surface)
             
             # draw player position
             pygame.draw.circle(self.render_surface, 'red', self.player_position, 10)

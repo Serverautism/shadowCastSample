@@ -7,13 +7,15 @@ class Wall:
         self.corners = corners
         self.polygon = geometry.Polygon(self.corners)
         self.distance = 0
+        center = list(self.polygon.centroid.coords)[0]
+        self.center = (int(center[0]), int(center[1]))
 
 
 class Map:
     def __init__(self):
         self.render_width, self.render_height = 1920, 1080
         self.render_dimensions = (self.render_width, self.render_height)
-        self.render_surface = pygame.Surface(self.render_dimensions).convert_alpha()
+        self.render_surface = pygame.Surface(self.render_dimensions)
         self.render_surface.set_colorkey('black')
 
         self.map_layout = [
@@ -85,5 +87,5 @@ class Map:
             self.walls.append(Wall(polygon))
             pygame.draw.polygon(self.render_surface, 'grey', polygon)
 
-    def update(self, surface):
+    def draw_walls(self, surface):
         surface.blit(self.render_surface, (0, 0))
