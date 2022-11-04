@@ -1,6 +1,7 @@
 import pygame
 from shapely import geometry, ops
 from scipy import spatial
+from threading import Thread
 
 
 class Shadow:
@@ -45,6 +46,7 @@ class ShadowCaster:
                 wall.distance = round(((nearest_point[0] - player_center[0]) ** 2 + (nearest_point[1] - player_center[1]) ** 2) ** .5, 2)
 
             wall_shadows = []
+            skipped_walls = 0
 
             for i, wall in enumerate(sorted(self.map.walls, key=lambda x: x.distance)):
                 allpoints = []
@@ -57,7 +59,7 @@ class ShadowCaster:
                         skip = True
                         if debug:
                             self.debug_render_surface.blit(
-                                self.font.render(str(j+1), True, self.colors['text']),
+                                self.font.render(str(j + 1 + skipped_walls), True, self.colors['text']),
                                 (wall.center[0], wall.center[1] - 15))
                         break
 
@@ -155,7 +157,7 @@ class ShadowCaster:
 
                 if debug:
                     self.debug_render_surface.blit(
-                        self.font.render(str(i+1), True, self.colors['text']), (wall.center[0], wall.center[1] - 15))
+                        self.font.render(str(i+1), True, self.colors['red']), (wall.center[0], wall.center[1] - 15))
                     self.debug_render_surface.blit(
                         self.font.render(str(wall.distance), True, self.colors['text']), wall.center)
 
