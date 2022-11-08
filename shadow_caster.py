@@ -1,5 +1,5 @@
 import pygame
-from shapely import geometry, ops
+from shapely import geometry
 
 
 class Shadow:
@@ -64,17 +64,9 @@ class ShadowCaster:
                     continue
 
                 allpoints = []
-
                 new_points = []
 
                 for corner in wall.corners:
-                    visible = False
-
-                    player_to_corner = geometry.LineString([player_center, corner])
-                    intersections = wall.polygon.intersection(player_to_corner)
-                    if type(intersections) == geometry.Point:
-                        visible = True
-
                     # vector = [change in x direction, change in y direction]
                     vector_x = corner[0] - player_center[0]
                     vector_y = corner[1] - player_center[1]
@@ -103,15 +95,15 @@ class ShadowCaster:
                     new_x = corner[0] + unit_vector_x * shadow_length
                     new_y = corner[1] + unit_vector_y * shadow_length
 
-                    new_point = [int(new_x), int(new_y)]
+                    new_point = (int(new_x), int(new_y))
 
                     allpoints.append(corner)
                     allpoints.append(new_point)
                     new_points.append(new_point)
 
+                    # draw debug stuff
                     pygame.draw.circle(self.debug_render_surface, self.colors['red'], corner, 4)
                     pygame.draw.circle(self.debug_render_surface, self.colors['green'], new_point, 4)
-
                     pygame.draw.aaline(self.debug_render_surface, self.colors['red'], player_center, corner)
                     pygame.draw.aaline(self.debug_render_surface, self.colors['green'], corner, new_point)
 
