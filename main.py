@@ -9,6 +9,7 @@ class Game:
 
         # drawing related stuff
         self.running = True
+        self.debug = False
 
         self.font = pygame.font.SysFont('Arial', 20)
 
@@ -37,10 +38,12 @@ class Game:
             self.handle_input()
 
             # draw map
-            self.shadow_caster.update(self.player_position, debug=True)
+            self.shadow_caster.update(self.player_position)
             self.shadow_caster.draw_shadows(self.render_surface)
             self.map.draw_walls(self.render_surface)
-            self.shadow_caster.draw_debug(self.render_surface)
+
+            if self.debug:
+                self.shadow_caster.draw_debug(self.render_surface)
             
             # draw player position
             pygame.draw.circle(self.render_surface, 'green', self.player_position, 8)
@@ -48,7 +51,7 @@ class Game:
             self.render_surface.blit(self.font.render('fps: ' + str(round(self.clock.get_fps(), 2)), True, 'darkgrey'), (5, 5))
             self.screen.blit(pygame.transform.scale(self.render_surface, self.screen_dimensions), (0, 0))
             pygame.display.update()
-            self.render_surface.fill('black')
+            self.render_surface.fill((150, 150, 150))
 
     def handle_input(self):
         for event in pygame.event.get():
@@ -58,6 +61,12 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.running = False
+
+                elif event.key == pygame.K_f:
+                    if self.debug:
+                        self.debug = False
+                    else:
+                        self.debug = True
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_w]:
