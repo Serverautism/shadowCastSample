@@ -12,13 +12,13 @@ class ShadowCaster:
     def __init__(self, map):
         self.map = map
 
-        self.font = pygame.font.SysFont('Arial', 20)
+        self.font = pygame.font.SysFont('Arial', 20, bold=True)
 
         self.colors = {
-            'text': (5, 5, 5),
-            'shadows': (83, 84, 84),
-            'green': (32, 252, 3),
-            'red': (133, 16, 16),
+            'text': (53, 80, 112),
+            'shadows': (109, 89, 122),
+            'green': (42, 157, 143),
+            'red': (229, 107, 111),
             'blue': (24, 29, 171)
         }
 
@@ -56,7 +56,7 @@ class ShadowCaster:
                     if finished_shadow.polygon.contains(wall.polygon):
                         skip = True
                         self.debug_render_surface.blit(
-                            self.font.render(str(j + 1 + skipped_walls), True, self.colors['text']),
+                            self.font.render(str(j + 1 + skipped_walls), False, self.colors['text']),
                             (wall.center[0], wall.center[1] - 15))
                         break
 
@@ -104,8 +104,8 @@ class ShadowCaster:
                     # draw debug stuff
                     pygame.draw.circle(self.debug_render_surface, self.colors['red'], corner, 4)
                     pygame.draw.circle(self.debug_render_surface, self.colors['green'], new_point, 4)
-                    pygame.draw.aaline(self.debug_render_surface, self.colors['red'], player_center, corner)
-                    pygame.draw.aaline(self.debug_render_surface, self.colors['green'], corner, new_point)
+                    pygame.draw.line(self.debug_render_surface, self.colors['red'], player_center, corner)
+                    pygame.draw.line(self.debug_render_surface, self.colors['green'], corner, new_point)
 
                 for point in self.render_corners:
                     line = [player_center, point]
@@ -118,9 +118,9 @@ class ShadowCaster:
                 wall_shadows.append(Shadow(shadow_polygon))
 
                 self.debug_render_surface.blit(
-                    self.font.render(str(i+1), True, self.colors['red']), (wall.center[0], wall.center[1] - 15))
+                    self.font.render(str(i+1), False, self.colors['text']), (wall.center[0], wall.center[1] - 15))
                 self.debug_render_surface.blit(
-                    self.font.render(str(wall.distance), True, self.colors['text']), wall.center)
+                    self.font.render(str(wall.distance), False, self.colors['text']), wall.center)
 
                 pygame.draw.polygon(self.shadow_render_surface, self.colors['shadows'], shadow_polygon)
 

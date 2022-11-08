@@ -7,9 +7,15 @@ class Game:
     def __init__(self):
         pygame.init()
 
-        # drawing related stuff
         self.running = True
         self.debug = False
+
+        # drawing related stuff
+        self.colors = {
+            'text': (53, 80, 112),
+            'background': (234, 172, 139),
+            'player': (229, 107, 111)
+        }
 
         self.font = pygame.font.SysFont('Arial', 20)
 
@@ -46,12 +52,12 @@ class Game:
                 self.shadow_caster.draw_debug(self.render_surface)
             
             # draw player position
-            pygame.draw.circle(self.render_surface, 'green', self.player_position, 8)
+            pygame.draw.circle(self.render_surface, self.colors['player'], self.player_position, 8)
 
             self.render_surface.blit(self.font.render('fps: ' + str(round(self.clock.get_fps(), 2)), True, 'darkgrey'), (5, 5))
             self.screen.blit(pygame.transform.scale(self.render_surface, self.screen_dimensions), (0, 0))
             pygame.display.update()
-            self.render_surface.fill((150, 150, 150))
+            self.render_surface.fill(self.colors['background'])
 
     def handle_input(self):
         for event in pygame.event.get():

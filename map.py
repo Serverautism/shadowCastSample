@@ -13,20 +13,31 @@ class Wall:
 
 class Map:
     def __init__(self):
+        self.colors = {
+            'walls': (181, 101, 118)
+        }
+
         self.render_width, self.render_height = 1920, 1080
         self.render_dimensions = (self.render_width, self.render_height)
         self.render_surface = pygame.Surface(self.render_dimensions)
         self.render_surface.set_colorkey('black')
 
         self.map_layout = [
-            [(718, 258), (868, 171), (1117, 173), (1247, 256), (1270, 418), (1201, 554), (1005, 640), (812, 657), (902, 556), (1022, 518), (1100, 443), (1107, 369), (1059, 320), (968, 305), (890, 322), (833, 385), (794, 450), (693, 382)]
+            [(388, 398), (480, 186), (864, 253), (724, 495)],
+            [(342, 844), (391, 777), (503, 823), (419, 889)],
+            [(978, 713), (1292, 571), (1400, 973)],
+            [(1399, 168), (1702, 95), (1685, 229), (1554, 243)],
+            [(1078, 410), (1102, 239), (1329, 303)],
+            [(1691, 636), (1845, 733), (1686, 855), (1548, 723)],
+            [(277, 613), (380, 557), (692, 591), (707, 624)],
+            [(193, 90), (85, 559), (158, 567), (407, 49)]
         ]
 
         self.walls = []
 
         for polygon in self.map_layout:
             self.walls.append(Wall(polygon))
-            pygame.draw.polygon(self.render_surface, 'grey', polygon)
+            pygame.draw.polygon(self.render_surface, self.colors['walls'], polygon)
 
     def draw_walls(self, surface):
         surface.blit(self.render_surface, (0, 0))
