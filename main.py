@@ -1,6 +1,7 @@
 import pygame
 from map import Map
 from shadow_caster import ShadowCaster
+import time
 
 
 class Game:
@@ -31,8 +32,9 @@ class Game:
         self.render_surface = pygame.Surface(self.render_dimensions)
 
         # player related
-        self.player_position = [1920/2, 1080/2]
+        self.player_position = [1920 / 2, 1080 / 2]
         self.player_speed = 2
+        self.last_time = time.time()
 
         # other objects
         self.map = Map()
@@ -50,7 +52,7 @@ class Game:
 
             if self.debug:
                 self.shadow_caster.draw_debug(self.render_surface)
-            
+
             # draw player position
             pygame.draw.circle(self.render_surface, self.colors['player'], self.player_position, 8)
 
@@ -74,15 +76,19 @@ class Game:
                     else:
                         self.debug = True
 
+        dt = time.time() - self.last_time
+        dt *= 60
+        self.last_time = time.time()
+
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_w]:
-            self.player_position[1] -= self.player_speed
+            self.player_position[1] -= self.player_speed * dt
         if pressed_keys[pygame.K_a]:
-            self.player_position[0] -= self.player_speed
+            self.player_position[0] -= self.player_speed * dt
         if pressed_keys[pygame.K_s]:
-            self.player_position[1] += self.player_speed
+            self.player_position[1] += self.player_speed * dt
         if pressed_keys[pygame.K_d]:
-            self.player_position[0] += self.player_speed
+            self.player_position[0] += self.player_speed * dt
 
 
 if __name__ == '__main__':
