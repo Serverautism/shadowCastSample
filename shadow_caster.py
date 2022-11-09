@@ -81,14 +81,14 @@ class ShadowCaster:
                     elif unit_vector_x > 0:
                         shadow_length_x = (self.render_width - corner[0]) / unit_vector_x
                     else:
-                        shadow_length_x = 1000
+                        shadow_length_x = self.render_width
 
                     if unit_vector_y < 0:
                         shadow_length_y = -corner[1] / unit_vector_y
                     elif unit_vector_y > 0:
                         shadow_length_y = (self.render_height - corner[1]) / unit_vector_y
                     else:
-                        shadow_length_y = 1000
+                        shadow_length_y = self.render_width
 
                     shadow_length = min(shadow_length_x, shadow_length_y)
 
