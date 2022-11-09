@@ -56,7 +56,7 @@ class Game:
             # draw player position
             pygame.draw.circle(self.render_surface, self.colors['player'], self.player_position, 8)
 
-            self.render_surface.blit(self.font.render('fps: ' + str(round(self.clock.get_fps(), 2)), True, 'darkgrey'), (5, 5))
+            self.render_surface.blit(self.font.render('fps: ' + str(round(self.clock.get_fps(), 2)), True, self.colors['text']), (5, 5))
             self.screen.blit(pygame.transform.scale(self.render_surface, self.screen_dimensions), (0, 0))
             pygame.display.update()
             self.render_surface.fill(self.colors['background'])
