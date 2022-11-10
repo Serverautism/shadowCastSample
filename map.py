@@ -2,7 +2,7 @@ import pygame
 from shapely import geometry, ops
 
 
-class Wall:
+class Obstacle:
     def __init__(self, corners, polygon):
         self.corners = corners
         self.polygon = polygon
@@ -14,7 +14,7 @@ class Wall:
 class Map:
     def __init__(self):
         self.colors = {
-            'walls': (181, 101, 118)
+            'obstacles': (42, 157, 143)
         }
 
         self.render_width, self.render_height = 1920, 1080
@@ -23,15 +23,17 @@ class Map:
         self.render_surface.set_colorkey('black')
 
         self.map_layout = [
-            [(127, 99), (130, 812), (185, 811), (166, 100)],
-            [(212, 101), (525, 114), (607, 271), (557, 522), (246, 561), (238, 517), (520, 482), (565, 281), (509, 152), (211, 134)],
-            [(737, 124), (782, 121), (1004, 551), (984, 586)],
-            [(957, 852), (1013, 852), (1295, 111), (1224, 104)],
-            [(1458, 819), (1455, 854), (1493, 854), (1495, 821)]
+            [(220, 396), (193, 505), (322, 517), (347, 397)],
+            [(548, 681), (568, 610), (670, 710)],
+            [(806, 417), (922, 310), (866, 103), (547, 190)],
+            [(1131, 725), (1194, 582), (1318, 549), (1579, 747)],
+            [(1318, 140), (1556, 133), (1673, 230)],
+            [(910, 907), (1066, 919), (1006, 968)],
+            [(759, 1049), (760, 1029), (796, 1028), (799, 1046)]
         ]
 
-        self.walls = []
-        self.new_walls = []
+        self.obstacles = []
+        self.new_obstacles = []
 
         for corners in self.map_layout:
             # make the polygon clockwise
@@ -45,7 +47,7 @@ class Map:
                 corners.reverse()
 
             # draw to screen
-            pygame.draw.polygon(self.render_surface, self.colors['walls'], corners)
+            pygame.draw.polygon(self.render_surface, self.colors['obstacles'], corners)
 
             # make shapely polygon
             polygon = geometry.Polygon(corners)
@@ -59,14 +61,14 @@ class Map:
 
                 for t in triangles:
                     if polygon.contains(t):
-                        self.new_walls.append(t)
+                        self.new_obstacles.append(t)
                 continue
 
-            self.walls.append(Wall(corners, polygon))
+            self.obstacles.append(Obstacle(corners, polygon))
 
-        for triangle in self.new_walls:
-            corners = triangle.exterior.coords
-            self.walls.append(Wall(corners, triangle))
+        for triangle in self.new_obstacles:
+            corners = list(triangle.exterior.coords)
+            self.obstacles.append(Obstacle(corners, triangle))
 
-    def draw_walls(self, surface):
+    def draw_obstacles(self, surface):
         surface.blit(self.render_surface, (0, 0))

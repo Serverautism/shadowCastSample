@@ -13,9 +13,9 @@ class Game:
 
         # drawing related stuff
         self.colors = {
-            'text': (53, 80, 112),
-            'background': (234, 172, 139),
-            'player': (229, 107, 111)
+            'text': (231, 111, 81),
+            'background': (233, 196, 106),
+            'player': (244, 162, 97)
         }
 
         self.font = pygame.font.SysFont('Arial', 20)
@@ -46,9 +46,11 @@ class Game:
             self.handle_input()
 
             # draw map
-            self.shadow_caster.update(self.player_position)
+            self.shadow_caster.generate_shadows(self.player_position)
+            self.shadow_caster.render_shadows()
+            self.shadow_caster.render_debug()
             self.shadow_caster.draw_shadows(self.render_surface)
-            self.map.draw_walls(self.render_surface)
+            self.map.draw_obstacles(self.render_surface)
 
             if self.debug:
                 self.shadow_caster.draw_debug(self.render_surface)
