@@ -49,15 +49,13 @@ class ShadowCaster:
             obstacle.distance = round(obstacle.polygon.distance(geometry.Point(source)), 2)
 
         # handle every obstacle from nearest to furthest
-        shaded_obstacles = 0
         for i, obstacle in enumerate(sorted(self.map.obstacles, key=lambda x: x.distance)):
             # check if obstacle is already covered by a shadow
             skip = False
             for j, shadow in enumerate(self.obstacle_shadows):
                 if shadow.polygon.contains(obstacle.polygon):
                     skip = True
-                    shaded_obstacles += 1
-                    self.shaded_obstacles.append((obstacle, j + 1 + shaded_obstacles))
+                    self.shaded_obstacles.append((obstacle, j + 1))
                     break
 
             if skip:
