@@ -14,7 +14,8 @@ class Obstacle:
 class Map:
     def __init__(self):
         self.colors = {
-            'obstacles': (42, 157, 143)
+            'obstacles': (42, 157, 143),
+            'outlines': (233, 23, 23)
         }
 
         self.render_width, self.render_height = 1920, 1080
@@ -56,10 +57,17 @@ class Map:
 
             if convex_hull_area != polygon_area:
                 triangles = ops.triangulate(polygon)
-
                 for t in triangles:
                     if polygon.contains(t):
                         self.new_obstacles.append(t)
+                    else:
+                        intersection = polygon.intersection(t)
+                        for element in intersection.geoms:
+                            if type(element) == geometry.Polygon:
+                                t = element
+                                corners = list(t.exterior.coords)
+                                pygame.draw.polygon(self.render_surface, self.colors['outlines'], corners, width=2)
+                                self.new_obstacles.append(t)
                 continue
 
             self.obstacles.append(Obstacle(corners, polygon))
