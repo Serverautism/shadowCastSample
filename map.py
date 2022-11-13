@@ -14,8 +14,7 @@ class Obstacle:
 class Map:
     def __init__(self):
         self.colors = {
-            'obstacles': (42, 157, 143),
-            'outlines': (233, 23, 23)
+            'obstacles': (42, 157, 143)
         }
 
         self.render_width, self.render_height = 1920, 1080
@@ -65,8 +64,6 @@ class Map:
                         for element in intersection.geoms:
                             if type(element) == geometry.Polygon:
                                 t = element
-                                corners = list(t.exterior.coords)
-                                pygame.draw.polygon(self.render_surface, self.colors['outlines'], corners, width=2)
                                 self.new_obstacles.append(t)
                 continue
 
